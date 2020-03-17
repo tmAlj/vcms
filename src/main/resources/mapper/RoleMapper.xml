@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--用户mapper-->
+<mapper namespace="com.wsd.mapper.RoleMapper">
+
+    <!--根据用户id查询所属的角色列表-->
+    <select id="queryRoleListByUserId" resultMap="role">
+        SELECT r.* FROM sys_user_role u LEFT JOIN sys_role r ON u.role_id = r.role_id WHERE u.user_id = #{userId}
+    </select>
+
+    <!--查询角色列表-->
+    <select id="getRoleList" resultMap="role">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role WHERE 1=1
+        <if test="role.name != '' and role.name != null">
+            AND name LIKE concat('%',#{role.name},'%')
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!--新增角色-->
+    <insert id="save" parameterType="com.wsd.entity.Role" useGeneratedKeys="true" keyProperty="roleId">
+		INSERT INTO sys_role
+		(
+			role_id,
+			role_name,
+			name,
+			remark,
+			create_time
+		)
+		VALUES
+		(
+			#{roleId},
+			#{roleName},
+			#{name},
+			#{remark},
+			#{createTime}
+		)
+	</insert>
+
+    <!--查询角色信息-->
+    <select id="getRole" resultMap="role">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role WHERE 1=1
+        <if test="role.roleName != '' and role.roleName != null">
+            AND role_name = #{role.roleName}
+        </if>
+        <if test="role.roleId != '' and role.roleId != null">
+            AND role_id = #{role.roleId}
+        </if>
+    </select>
+
+    <!--删除用户角色-->
+    <delete id="deleteRole">
+        DELETE FROM sys_role WHERE role_id IN
+        <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ;
+        DELETE FROM sys_role_menu WHERE role_id IN
+        <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ;
+        DELETE FROM sys_user_role WHERE role_id IN
+        <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <!--修改角色-->
+    <update id="update" parameterType="com.wsd.entity.Role">
+        UPDATE sys_role
+        <set>
+            <if test="name != null and name !='' ">
+                name = #{name},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark}
+            </if>
+        </set>
+        WHERE role_id = #{roleId}
+    </update>
+
+    <!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="role" type="com.wsd.entity.Role">
+        <result column="role_id" property="roleId"></result>
+        <result column="role_name" property="roleName"></result>
+        <result column="create_time" property="createTime"></result>
+    </resultMap>
+
+    <!--返回列-->
+    <sql id="Base_Column_List">
+    	role_id, role_name, name, remark, create_time
+  	</sql>
+
+</mapper>

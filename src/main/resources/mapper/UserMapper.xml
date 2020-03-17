@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--用户mapper-->
+<mapper namespace="com.wsd.mapper.UserMapper">
+
+    <!--根据用户名查询用户-->
+    <select id="loadUserByUsername" resultMap="user">
+        SELECT
+		<include refid="Base_Column_List"/>
+        FROM sys_user WHERE username = #{username}
+    </select>
+
+    <!--查询用户列表-->
+    <select id="getUserList" resultMap="user">
+        SELECT
+		<include refid="Base_Column_List"/>
+		FROM sys_user WHERE 1=1
+        <if test="user.name != '' and user.name != null">
+			AND name like concat('%',#{user.name},'%')
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!--新增用户-->
+    <insert id="save" parameterType="com.wsd.entity.User" useGeneratedKeys="true" keyProperty="userId">
+		insert into sys_user
+		(
+			user_id,
+			username,
+			password,
+			email,
+			mobile,
+			enabled,
+			name,
+			userface,
+			remark,
+			create_time
+		)
+		values
+		(
+			#{userId},
+			#{username},
+			#{password},
+			#{email},
+			#{mobile},
+			#{enabled},
+			#{name},
+			#{userface},
+			#{remark},
+			#{createTime}
+		)
+	</insert>
+
+	<!--删除用户-->
+	<delete id="deleteUser">
+		delete from sys_user
+		<trim prefix="where user_id in">
+			<foreach item="userId" collection="userIds" open="(" close=")" separator=",">
+				#{userId}
+			</foreach>
+		</trim>
+		;
+		delete from sys_user_role
+		<trim prefix="where user_id in">
+			<foreach item="userId" collection="userIds" open="(" close=")" separator=",">
+				#{userId}
+			</foreach>
+		</trim>
+	</delete>
+
+	<!--修改用户-->
+	<update id="update" parameterType="com.wsd.entity.User">
+		update sys_user
+		<set>
+			<if test="email != null">email = #{email}, </if>
+			<if test="mobile != null">mobile = #{mobile}, </if>
+			<if test="enabled != null">enabled = #{enabled}, </if>
+			<if test="name != null">name = #{name}, </if>
+			<if test="remark != null">remark = #{remark}, </if>
+			<if test="password != null">password = #{password}, </if>
+		</set>
+		where user_id = #{userId}
+	</update>
+
+	<!--根据职位查询用户列表-->
+	<select id="getUserListByPostId" resultMap="user">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM sys_user
+		<trim prefix="where post_id in">
+			<foreach item="postId" collection="postIds" open="(" close=")" separator=",">
+				#{postId}
+			</foreach>
+		</trim>
+		ORDER BY create_time DESC
+	</select>
+
+	<!--根据部门查询用户列表-->
+	<select id="getUserListByOrgnId" resultMap="user">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM sys_user
+		<trim prefix="where orgn_id in">
+			<foreach item="orgnId" collection="orgnIds" open="(" close=")" separator=",">
+				#{orgnId}
+			</foreach>
+		</trim>
+		ORDER BY create_time DESC
+	</select>
+
+
+	<!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="user" type="com.wsd.entity.User">
+        <id column="user_id" property="userId"></id>
+        <result column="create_time" property="createTime"></result>
+		<result column="post_id" property="postId"></result>
+		<result column="orgn_id" property="orgnId"></result>
+    </resultMap>
+
+	<!--返回列-->
+	<sql id="Base_Column_List">
+    	user_id, username, password, email, mobile, enabled, name, userface, remark, create_time, post_id, orgn_id
+  	</sql>
+</mapper>

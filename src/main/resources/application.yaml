@@ -1,0 +1,32 @@
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static/
+  thymeleaf:
+    cache: true
+    check-template: true
+    check-template-location: true
+    encoding: utf-8
+    prefix: classpath:/templates/
+    servlet:
+      content-type: text/html
+    suffix: .html
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/vcms?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: root
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  config-location: classpath:config/sqlMapConfig.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+server:
+  servlet:
+    context-path: /vcms
+logging:
+  level:
+    com.wsd.mapper : debug

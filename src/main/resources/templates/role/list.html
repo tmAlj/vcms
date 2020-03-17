@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>角色列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/layui/css/layui.css}" media="all">
+</head>
+<body>
+    <!--搜索框-->
+    <div class="demoTable">
+        角色名称：
+        <div class="layui-inline">
+            <input class="layui-input" name="name" id="name" autocomplete="off" placeholder="请输入角色名称">
+        </div>
+        <button class="layui-btn" data-type="reload" id="reload">搜索</button>
+        <button class="layui-btn" data-type="reset" id="reset">重置</button>
+    </div>
+    <!--数据列表-->
+    <table class="layui-table" id="dataTable" lay-filter="dataTable"></table>
+</div>
+<script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        contextPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+
+        $(function () {
+
+            var table = null;
+            layui.use('table', function(){
+                table = layui.table;
+                var form = layui.form;
+                table.render({
+                    elem: '#dataTable'
+                    ,url: '../role/getRoleList'
+                    ,toolbar: '#toolbarTmp'
+                    ,defaultToolbar: ['filter', 'exports', 'print']
+                    ,cols: [
+                        [
+                            {type: 'numbers'}
+                            ,{checkbox: true}
+                            ,{field:'userId', width:80, title: 'ID', hide: true}
+                            ,{field:'name', width:150, title: '角色名称'}
+                            ,{field:'roleName', width:150, title: '角色标识'}
+                            ,{field:'createTime', width:170, title: '创建时间', sort: true}
+                            ,{field:'remark', title: '备注'}
+                            ,{fixed: 'right', width:200, align:'center', toolbar: '#barColumnTmp'}
+                        ]
+                    ]
+                    ,page: true
+                    ,parseData: function(res){
+                        return {
+                            "code": res.code,
+                            "msg": res.msg,
+                            "count": res.page.total,
+                            "data": res.page.list
+                        };
+                    }
+                });
+
+                /*监听表格头部工具栏事件*/
+                table.on('toolbar(dataTable)', function(obj){
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    switch(obj.event){
+                        case 'add':
+                            //打开弹框,在index中打开
+                            parent.layer.open({
+                                type: 2
+                                ,title: '添加角色'
+                                ,content: 'role/add'
+                                ,maxmin: true
+                                ,area: ['460px', '350px']
+                                ,btn: ['确定', '取消']
+                                ,yes: function(index, layero){
+                                    var iframeWindow = layero.find('iframe')[0].contentWindow
+                                        ,submitID = 'LAY-user-back-submit'
+                                        ,submitFilter = 'LAY-user-front-submit'
+                                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                                    //监听提交
+                                    iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
+                                        console.log(data)
+                                        //调用保存角色接口
+                                        addRoleFunction(data.field, index);
+                                    });
+                                    submit.trigger('click');
+                                }
+                            });
+                            break;
+                        case 'delete':
+                            //获取表格数据
+                            var data = checkStatus.data;
+                            if(data.length < 1){
+                                parent.layer.msg("请选择数据后删除",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                            }else{
+                                var formData = [];
+                                if(data.length != 0){
+                                    //获取多选用户ID数组
+                                    for (var i = 0; i < data.length; i++){
+                                        formData.push(data[i].roleId)
+                                    }
+                                    parent.layer.confirm('确定删除?', function(index){
+                                        //调用删除角色接口
+                                        deleteRoleFunction(formData, index);
+                                    });
+                                }
+                            }
+                            break;
+                    };
+                });
+
+                /*监听表格行操作列按钮事件*/
+                table.on('tool(dataTable)', function(obj){
+                    var data = obj.data;
+                    if(obj.event === 'delete'){
+                        parent.layer.confirm('确定删除?', function(index){
+                            var formData = [];
+                            formData.push(data.roleId);
+                            //调用删除角色接口
+                            deleteRoleFunction(formData, index);
+                        });
+                    } else if(obj.event === 'edit'){
+                        //打开弹框,在index中打开
+                        parent.layer.open({
+                            type: 2
+                            ,title: '修改角色'
+                            ,content: 'role/update'
+                            ,maxmin: true
+                            ,area: ['460px', '350px']
+                            ,btn: ['确定', '取消']
+                            ,yes: function(index, layero){
+                                var iframeWindow = layero.find('iframe')[0].contentWindow
+                                    ,submitID = 'LAY-user-back-submit'
+                                    ,submitFilter = 'LAY-user-front-submit'
+                                    ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                                //监听提交
+                                iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
+                                    //调用更新角色接口
+                                    updateRoleFunction(data.field, index);
+                                });
+                                submit.trigger('click');
+                            }
+                            ,success: function (layero, index) {
+                                //获取弹框中的表单
+                                var form = layero.find('iframe')[0].contentWindow.layui.form;
+                                //编辑表单赋值
+                                layero.find('iframe').contents().find('#roleId').val(data.roleId);
+                                layero.find('iframe').contents().find('#name').val(data.name);
+                                layero.find('iframe').contents().find('#roleName').val(data.roleName);
+                                layero.find('iframe').contents().find('#remark').val(data.remark);
+                                //刷新表单
+                                form.render("checkbox");
+                            }
+                        });
+                    }else if(obj.event === 'menu'){
+                        //打开弹框,在index中打开
+                        parent.layer.open({
+                            type: 2
+                            ,title: '分配菜单'
+                            ,content: 'role/menu/' + data.roleId    //给弹框传值
+                            ,maxmin: true
+                            ,area: ['360px', '500px']
+                            ,btn: ['确定', '取消']
+                            ,yes: function(index, layero){
+                                var iframeWindow = layero.find('iframe')[0].contentWindow
+                                    ,submitID = 'LAY-user-back-submit'
+                                    ,submitFilter = 'LAY-user-front-submit'
+                                    ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                                //监听提交
+                                iframeWindow.layui.form.on('submit('+ submitFilter +')',function(res){
+                                    //执行弹框中回调方法，获取选中的菜单值
+                                    var menuIds = $(layero).find("iframe")[0].contentWindow.callbackdata();
+                                    var formdata = {
+                                        "roleId": data.roleId,
+                                        "menuIdList": menuIds
+                                    }
+                                    //调用修改角色菜单接口
+                                    updateRoleAndMenuFunction(formdata, index);
+                                });
+                                submit.trigger('click');
+                            }
+                            ,success: function (layero, index) {
+                            }
+                        });
+                    }
+                });
+
+                /*搜索重置按钮点击事件*/
+                $('#reset,#reload').on('click', function(){
+                    var type = $(this).data('type');
+                    if(type == 'reset'){
+                        $("#name").val("");
+                    }else{
+                        var name = $('#name').val();
+                        //执行重载
+                        table.reload('dataTable', {
+                            page: {
+                                curr: 1
+                            }
+                            ,where: {
+                                name: name
+                            }
+                        });
+                    }
+                });
+            });
+
+            /*新增角色接口*/
+            function addRoleFunction(formData, index) {
+                var url = contextPath + "../role/addRole";
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    data: JSON.stringify(formData),
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            parent.layer.close(index);
+                            //刷新表格
+                            table.reload('dataTable');
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+
+            /*删除角色接口*/
+            function deleteRoleFunction(formData, index) {
+                var url = contextPath + "../role/deleteRole";
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    data: JSON.stringify(formData),
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            parent.layer.close(index);
+                            //刷新表格
+                            table.reload('dataTable');
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+
+            /*更新角色接口*/
+            function updateRoleFunction(formData, index) {
+                var url = contextPath + "../role/updateRole";
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    data: JSON.stringify(formData),
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            parent.layer.close(index);
+                            //刷新表格
+                            table.reload('dataTable');
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+
+            /*更新角色菜单接口*/
+            function updateRoleAndMenuFunction(formData, index) {
+                var url = contextPath + "../rolemenu/updateRoleAndMenu";
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    data: JSON.stringify(formData),
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            parent.layer.close(index);
+                            //刷新表格
+                            table.reload('dataTable');
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+        })
+    </script>
+    <!--数据行工具栏-->
+    <script type="text/html" id="barColumnTmp">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="menu">分配菜单</a>
+    </script>
+    <!--表格头部工具栏-->
+    <script type="text/html" id="toolbarTmp">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+            <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        </div>
+    </script>
+</body>
+</html>

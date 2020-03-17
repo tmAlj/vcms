@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>职位列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/common/common.css}" media="all">
+</head>
+<body>
+    <!--搜索框-->
+    <div class="demoTable">
+        职位名称：
+        <div class="layui-inline">
+            <input class="layui-input" name="name" id="name" autocomplete="off" placeholder="请输入职位名称">
+        </div>
+        <button class="layui-btn" data-type="reload" id="reload">搜索</button>
+        <button class="layui-btn" data-type="reset" id="reset">重置</button>
+    </div>
+    <!--工具栏-->
+    <div class="tm-tool">
+        <button class="layui-btn layui-btn-sm" id="add">新增</button>
+        <button class="layui-btn layui-btn-sm" id="delete">删除</button>
+    </div>
+    <!--数据列表-->
+    <table class="layui-table" id="dataTable" lay-filter="dataTable"></table>
+</div>
+<script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        contextPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+
+        $(function () {
+            var table = null;
+            layui.use('table', function(){
+                table = layui.table;
+                var form = layui.form;
+                table.render({
+                    elem: '#dataTable'
+                    ,url: '../post/getPostList'
+                    ,cols: [
+                        [
+                            {type: 'numbers'}
+                            ,{checkbox: true}
+                            ,{field:'postId', width:80, title: 'ID', hide: true}
+                            ,{field:'name', width:150, title: '职位名称'}
+                            ,{field:'code', width:150, title: '职位编码'}
+                            ,{field:'createTime', width:170, title: '创建时间', sort: true}
+                            ,{field:'remark', title: '备注'}
+                            ,{fixed: 'right', width:160, align:'center', toolbar: '#barColumnTmp'}
+                        ]
+                    ]
+                    ,page: true
+                    ,parseData: function(res){
+                        return {
+                            "code": res.code,
+                            "msg": res.msg,
+                            "count": res.page.total,
+                            "data": res.page.list
+                        };
+                    }
+                });
+
+                /*工具栏新增按钮点击事件*/
+                $('#add').click(function () {
+                    //打开弹框,在index中打开
+                    parent.layer.open({
+                        type: 2
+                        , title: '添加职位'
+                        , content: 'post/add'
+                        , maxmin: true
+                        , area: ['460px', '350px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = layero.find('iframe')[0].contentWindow
+                                , submitID = 'LAY-user-back-submit'
+                                , submitFilter = 'LAY-user-front-submit'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitFilter + ')', function (data) {
+                                //调用新增职位接口
+                                getCommonImpl(data.field, index, "../post/addPost");
+                            });
+                            submit.trigger('click');
+                        }
+                    });
+                });
+
+                /*工具栏删除按钮点击事件*/
+                $('#delete').click(function () {
+                    var checkStatus = table.checkStatus("dataTable");
+                    console.log(checkStatus)
+                    //获取表格数据
+                    var data = checkStatus.data;
+                    if(data.length < 1){
+                        parent.layer.msg("请选择数据后删除",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }else{
+                        var formData = [];
+                        if(data.length != 0){
+                            //获取多选用户ID数组
+                            for (var i = 0; i < data.length; i++){
+                                formData.push(data[i].postId)
+                            }
+                            parent.layer.confirm('确定删除?', function(index){
+                                //调用删除职位接口
+                                getCommonImpl(formData, index, "../post/deletePost");
+                            });
+                        }
+                    }
+                });
+
+                /*监听表格行操作列按钮事件*/
+                table.on('tool(dataTable)', function(obj){
+                    var data = obj.data;
+                    if(obj.event === 'delete'){
+                        parent.layer.confirm('确定删除?', function(index){
+                            var formData = [];
+                            formData.push(data.postId);
+                            //调用删除职位接口
+                            getCommonImpl(formData, index, "../post/deletePost");
+                        });
+                    } else if(obj.event === 'edit'){
+                        //打开弹框,在index中打开
+                        parent.layer.open({
+                            type: 2
+                            ,title: '修改职位'
+                            ,content: 'post/update'
+                            ,maxmin: true
+                            ,area: ['460px', '350px']
+                            ,btn: ['确定', '取消']
+                            ,yes: function(index, layero){
+                                var iframeWindow = layero.find('iframe')[0].contentWindow
+                                    ,submitID = 'LAY-user-back-submit'
+                                    ,submitFilter = 'LAY-user-front-submit'
+                                    ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                                //监听提交
+                                iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
+                                    //调用修改职位接口
+                                    getCommonImpl(data.field, index, "../post/updatePost");
+                                });
+                                submit.trigger('click');
+                            }
+                            ,success: function (layero, index) {
+                                //获取弹框中的表单
+                                var form = layero.find('iframe')[0].contentWindow.layui.form;
+                                //编辑表单赋值
+                                layero.find('iframe').contents().find('#postId').val(data.postId);
+                                layero.find('iframe').contents().find('#name').val(data.name);
+                                layero.find('iframe').contents().find('#code').val(data.code);
+                                layero.find('iframe').contents().find('#remark').val(data.remark);
+                                //刷新表单
+                                form.render("checkbox");
+                            }
+                        });
+                    }
+                });
+
+                /*搜索重置按钮点击事件*/
+                $('#reset,#reload').on('click', function(){
+                    var type = $(this).data('type');
+                    if(type == 'reset'){
+                        $("#name").val("");
+                    }else{
+                        var name = $('#name').val();
+                        //执行重载
+                        table.reload('dataTable', {
+                            page: {
+                                curr: 1
+                            }
+                            ,where: {
+                                name: name
+                            }
+                        });
+                    }
+                });
+
+                /*统一调用后台接口*/
+                function getCommonImpl(formData, index, url) {
+                    var url = contextPath + url;
+                    //数据加载弹出层
+                    var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                    $.ajax({
+                        type: 'POST',
+                        async: false,
+                        url: url,
+                        dataType: 'json',
+                        data: JSON.stringify(formData),
+                        contentType:"application/json",
+                        success: function(data) {
+                            parent.layer.close(loadingMsg);
+                            if (data.code == 0) {
+                                parent.layer.close(index);
+                                //刷新表格
+                                table.reload('dataTable');
+                            } else {
+                                var msg = data.msg;
+                                parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                            }
+                        },
+                        error: function() {
+                            parent.layer.close(loadingMsg);
+                            parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    });
+                }
+            });
+        })
+    </script>
+    <!--数据行工具栏-->
+    <script type="text/html" id="barColumnTmp">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+    </script>
+    <!--表格头部工具栏-->
+    <script type="text/html" id="toolbarTmp">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+            <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        </div>
+    </script>
+    <!--是否启用栏-->
+    <script type="text/html" id="enabledTmp">
+        {{#  if(d.enabled == 1){ }}
+            <span>启用</span>
+        {{#  } else { }}
+            <span style="color: red;">禁用</span>
+        {{#  } }}
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>分配菜单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/ztree/css/metroStyle/metroStyle.css}" media="all">
+</head>
+<body>
+<div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
+    <!--roleId-->
+    <input type="hidden" name="roleId" lay-verify="" autocomplete="off" class="layui-input" id="roleId" th:value="${roleId}">
+
+    <ul id="menuTree" class="ztree"></ul>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-back-submit" value="确认">
+    </div>
+</div>
+    <script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
+    <script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/ztree/jquery.ztree.all.min.js}"></script>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        contextPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+
+        var ztree;
+        /*弹框关闭回调函数*/
+        var callbackdata = function () {
+            //获取选择的菜单
+            var nodes = ztree.getCheckedNodes(true);
+            var menuIdList = [];
+            for(var i=0; i<nodes.length; i++) {
+                menuIdList.push(nodes[i].menuId);
+            }
+            return menuIdList;
+        }
+
+        $(function () {
+            //动态获取角色id
+            var roleId = $("#roleId").val();
+
+            /*ztree设置*/
+            var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "menuId",
+                        pIdKey: "parentId",
+                        rootPId: -1
+                    },
+                    key: {
+                        url:"nourl"
+                    }
+                },
+                check:{
+                    enable:true,
+                    nocheckInherit:true
+                }
+            };
+
+
+            /*初始化*/
+            init();
+            function init() {
+                //调用查询菜单树接口
+                getMenuTreeFunction();
+                //调用查询当前角色已分配菜单接口
+                getMenuIdsByRoleFunction();
+            }
+
+            /*弹框关闭回调函数*/
+            /*var callbackdata = function () {
+                //获取选择的菜单
+                var nodes = ztree.getCheckedNodes(true);
+                var menuIdList = [];
+                for(var i=0; i<nodes.length; i++) {
+                    menuIdList.push(nodes[i].menuId);
+                }
+                return menuIdList;
+            }*/
+
+            /*查询菜单树接口*/
+            function getMenuTreeFunction() {
+                var url = contextPath + "../../menu/getMenuTree";
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'GET',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            //parent.layer.close(index);
+                            ztree = $.fn.zTree.init($("#menuTree"), setting, data.menuList);
+                            //展开所有节点
+                            ztree.expandAll(true);
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+
+            /*查询当前角色已分配菜单接口*/
+            function getMenuIdsByRoleFunction() {
+                var url = contextPath + "../../role/getMenuIdsByRoleId/" + roleId;
+                //数据加载弹出层
+                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                $.ajax({
+                    type: 'GET',
+                    async: false,
+                    url: url,
+                    dataType: 'json',
+                    contentType:"application/json",
+                    success: function(data) {
+                        parent.layer.close(loadingMsg);
+                        if (data.code == 0) {
+                            var role = data.roleInfo;
+                            //勾选角色所拥有的菜单
+                            var menuIds = role.menuIdList;
+                            for(var i = 0; i < menuIds.length; i++) {
+                                var node = ztree.getNodeByParam("menuId", menuIds[i]);
+                                ztree.checkNode(node, true, false);
+                            }
+                        } else {
+                            var msg = data.msg;
+                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    },
+                    error: function() {
+                        parent.layer.close(loadingMsg);
+                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

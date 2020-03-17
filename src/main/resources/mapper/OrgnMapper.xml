@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--系统组织mapper-->
+<mapper namespace="com.wsd.mapper.OrgnMapper">
+
+    <!--查询系统组织列表-->
+    <select id="getOrgnList" resultMap="orgn">
+        SELECT
+          m.*,
+		  case WHEN (SELECT p.name FROM sys_orgn p WHERE p.orgn_id = m.parent_id) is null THEN '根组织'
+		  else (SELECT p.name FROM sys_orgn p WHERE p.orgn_id = m.parent_id) end as parentName
+        FROM
+            sys_orgn m
+        ORDER BY
+            order_num ASC
+    </select>
+
+    <!--新增组织-->
+    <insert id="save" parameterType="com.wsd.entity.Orgn" useGeneratedKeys="true" keyProperty="menuId">
+		insert into sys_orgn
+		(
+			orgn_id,
+			parent_id,
+			name,
+		    manager,
+		    mobile,
+		    email,
+			order_num,
+			create_time
+		)
+		values
+		(
+			#{orgnId},
+			#{parentId},
+			#{name},
+			#{manager},
+			#{mobile},
+			#{email},
+			#{orderNum},
+			#{createTime}
+		)
+	</insert>
+
+	<!--删除组织-->
+	<delete id="deleteOrgn">
+		delete from sys_orgn
+		<trim prefix="where orgn_id in">
+			<foreach item="orgnId" collection="orgnIds" open="(" close=")" separator=",">
+				#{orgnId}
+			</foreach>
+		</trim>
+	</delete>
+
+	<!--修改组织-->
+	<update id="update" parameterType="com.wsd.entity.Orgn">
+		update sys_orgn
+		<set>
+			<if test="name != null">name = #{name}, </if>
+			<if test="orderNum != null">order_num = #{orderNum}, </if>
+			<if test="manager != null">manager = #{manager}, </if>
+			<if test="mobile != null">mobile = #{mobile}, </if>
+			<if test="email != null">email = #{email} </if>
+		</set>
+		where orgn_id = #{orgnId}
+	</update>
+
+    <!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="orgn" type="com.wsd.entity.Orgn">
+        <result column="orgn_id" property="orgnId"></result>
+        <result column="parent_id" property="parentId"></result>
+        <result column="order_num" property="orderNum"></result>
+        <result column="create_time" property="createTime"></result>
+    </resultMap>
+
+    <!--返回列-->
+    <sql id="Base_Column_List">
+    	orgn_id, parent_id, name, order_num, create_time, manager, mobile, email
+  	</sql>
+</mapper>
