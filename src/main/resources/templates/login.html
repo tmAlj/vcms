@@ -75,12 +75,15 @@
         var password = $("input[name='password']").val();
         var code = $("input[name='code']").val();
         var data = "username=" + username + "&password=" + password + "&code=" + code;
+        var loadingMsg = layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+
         $.ajax({
             type: "POST",
             url: contextPath + "login",
             data: data,
             dataType: "json",
             success: function (data) {
+                layer.close(loadingMsg);
                 //code为0登录成功
                 if (data.code == 0) {
                     var userInfo = data.userInfo;
@@ -90,11 +93,12 @@
                     //刷新验证码
                     onRefreshEvet();
                     var msg = data.msg;
-                    layer.msg(msg, {offset: '70px', time: 2000, anim: 6});
+                    layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
                 }
             },
             error: function (msg) {
-                console.log(msg);
+                layer.close(loadingMsg);
+                layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
             }
         });
     }
@@ -126,15 +130,15 @@
         var password = $("input[name='password']").val();
         var code = $("input[name='code']").val();
         if (username == null || username == "") {
-            layer.msg('账号不能为空！', {offset: '70px', time: 2000, anim: 6});
+            layer.msg("账号不能为空",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
             return false;
         }
         else if (password == null || password == "") {
-            layer.msg('密码不能为空！', {offset: '70px', time: 2000, anim: 6});
+            layer.msg('密码不能为空！', {offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
             return false;
         }
         else if (code == null || code == "") {
-            layer.msg('验证码不能为空！', {offset: '70px', time: 2000, anim: 6});
+            layer.msg('验证码不能为空！', {offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
             return false;
         } else {
             return true;

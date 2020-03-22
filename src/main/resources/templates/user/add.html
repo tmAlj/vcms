@@ -17,50 +17,40 @@
 <body>
 <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
     <div class="layui-form-item">
-        <label class="layui-form-label">用户名</label>
+        <label class="layui-form-label">用户名<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="name" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" lay-verType="tips">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">账号</label>
+        <label class="layui-form-label">账号<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="username" lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input" lay-verType="tips">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">邮箱</label>
+        <label class="layui-form-label">邮箱<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" lay-verType="tips">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">手机</label>
+        <label class="layui-form-label">手机<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="mobile" lay-verify="phone" placeholder="请输入手机" autocomplete="off" class="layui-input" lay-verType="tips">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">职位</label>
+        <label class="layui-form-label">职位<span style="color: red">*</span></label>
         <div class="layui-input-inline">
-            <select name="city" lay-verify="" lay-search>
-                <option value="010">董事长</option>
-                <option value="021">人事主管</option>
-                <option value="0571" selected>财务主管</option>
+            <select name="postId" lay-verify="required" lay-search id="option" lay-verType="tips">
             </select>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">部门</label>
+        <label class="layui-form-label">部门<span style="color: red">*</span></label>
         <div class="layui-input-inline">
-            <input type="text" id="tree" lay-filter="tree" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">角色</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="" title="管理员" lay-skin="primary" checked>
-            <input type="checkbox" name="" title="超级管理员" lay-skin="primary">
+            <input type="text" name="orgnId" id="tree" lay-filter="tree" class="layui-input" lay-verify="" lay-verType="tips">
         </div>
     </div>
     <div class="layui-form-item">
@@ -75,6 +65,11 @@
             <input type="checkbox" lay-filter="switch" name="enabled" lay-skin="switch" lay-text="启用|禁用" checked>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色</label>
+        <div class="layui-input-block" id="checkobx">
+        </div>
+    </div>
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-back-submit" value="确认">
     </div>
@@ -82,42 +77,121 @@
 <script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
 <script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
     <script type="text/javascript">
+
+        /*<![CDATA[*/
+        contextPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+
         $(function () {
             layui.config({
                 base: '../static/plugins/'
             }).extend({
                 treeSelect: 'treeSelect/treeSelect'
-            }).use('treeSelect', function () {
+            }).use(['treeSelect','form'], function () {
+                var $ = layui.jquery;
                 var treeSelect = layui.treeSelect;
-                    treeSelect.render({
-                        elem: '#tree',
-                        data: '../orgn/getOrgnList',
-                        type: 'get',
-                        placeholder: '请输入部门',
-                        search: true,
-                        style: {
-                            folder: {
-                                enable: true
-                            },
-                            line: {
-                                enable: true
+                var form = layui.form;
+                treeSelect.render({
+                    elem: '#tree',
+                    data: '../orgn/getOrgnList',
+                    type: 'get',
+                    placeholder: '请输入部门',
+                    search: true,
+                    //点击回调
+                    click: function(d){
+                        //输入框赋值
+                        $("#tree").val(d.current.orgnId);
+                    },
+                    //加载完成后的回调函数
+                    success: function (d) {
+                        console.log(d);
+//                选中节点，根据id筛选
+//                treeSelect.checkNode('tree', 3);
+
+//                获取zTree对象，可以调用zTree方法
+//                var treeObj = treeSelect.zTree('tree');
+//                console.log(treeObj);
+
+//                刷新树结构
+//                treeSelect.refresh();
+                    }
+                });
+
+                //调用角色列表接口
+                getRoleListImpl();
+                //调用职位列表接口
+                getPostListImpl();
+
+                /*角色列表接口*/
+                function getRoleListImpl() {
+                    var url = contextPath + "../role/getRoleList?page=1&limit=999&name=";
+                    //数据加载弹出层
+                    var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                    $.ajax({
+                        type: 'GET',
+                        async: false,
+                        url: url,
+                        dataType: 'json',
+                        contentType:"application/json",
+                        success: function(data) {
+                            parent.layer.close(loadingMsg);
+                            if (data.code == 0) {
+                                //动态渲染角色多选框
+                                var list = data.page.list;
+                                var checkboxs = "";
+                                for(var i = 0; i < list.length; i++){
+                                    checkboxs += "<input type='checkbox' name='role' title='" + list[i].name +  "' value='" + list[i].roleId + "' lay-skin='primary'>";
+                                }
+                                $('#checkobx').append(checkboxs);
+                                //刷新表单
+                                form.render();
+                            } else {
+                                var msg = data.msg;
+                                parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
                             }
                         },
-                        click: function(d){
-                            console.log(d);
-                        },
-                        success: function (d) {
-                            console.log(d);
-                             //选中节点，根据id筛选
-                          //  treeSelect.checkNode('tree', 3);
-                            //console.log($('#tree').val());
-                            //获取zTree对象，可以调用zTree方法
-                           // var treeObj = treeSelect.zTree('tree');
-                           // console.log(treeObj);
-                            //刷新树结构
-                            //treeSelect.refresh('tree');
+                        error: function() {
+                            parent.layer.close(loadingMsg);
+                            parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
                         }
                     });
+                }
+
+                /*职位列表接口*/
+                function getPostListImpl() {
+                    var url = contextPath + "../post/getPostList?page=1&limit=999&name=";
+                    //数据加载弹出层
+                    var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
+                    $.ajax({
+                        type: 'GET',
+                        async: false,
+                        url: url,
+                        dataType: 'json',
+                        contentType:"application/json",
+                        success: function(data) {
+                            parent.layer.close(loadingMsg);
+                            if (data.code == 0) {
+                                //动态渲染角色下拉框
+                                var list = data.page.list;
+                                var options = "";
+                                for(var i = 0; i < list.length; i++){
+                                    options += "<option value='" + list[i].postId +  "' lay-skin='primary'>" + list[i].name + "</option>";
+                                }
+                                $('#option').append(options);
+                                //刷新表单
+                                form.render();
+                            } else {
+                                var msg = data.msg;
+                                parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                            }
+                        },
+                        error: function() {
+                            parent.layer.close(loadingMsg);
+                            parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                        }
+                    });
+                }
+
             });
         })
     </script>

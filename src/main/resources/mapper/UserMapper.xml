@@ -7,14 +7,15 @@
     <select id="loadUserByUsername" resultMap="user">
         SELECT
 		<include refid="Base_Column_List"/>
-        FROM sys_user WHERE username = #{username}
+        FROM sys_user u WHERE username = #{username}
     </select>
 
     <!--查询用户列表-->
-    <select id="getUserList" resultMap="user">
+    <select id="getUserList" resultMap="userList">
         SELECT
-		<include refid="Base_Column_List"/>
-		FROM sys_user WHERE 1=1
+		<include refid="Base_Column_List"/>,
+		ur.role_id
+		FROM sys_user u left join sys_user_role ur on u.user_id = ur.user_id WHERE 1=1
         <if test="user.name != '' and user.name != null">
 			AND name like concat('%',#{user.name},'%')
         </if>
@@ -34,7 +35,9 @@
 			name,
 			userface,
 			remark,
-			create_time
+			create_time,
+			post_id,
+			orgn_id
 		)
 		values
 		(
@@ -47,7 +50,9 @@
 			#{name},
 			#{userface},
 			#{remark},
-			#{createTime}
+			#{createTime},
+			#{postId},
+			#{orgnId}
 		)
 	</insert>
 
@@ -78,6 +83,8 @@
 			<if test="name != null">name = #{name}, </if>
 			<if test="remark != null">remark = #{remark}, </if>
 			<if test="password != null">password = #{password}, </if>
+			<if test="postId != null">post_id = #{postId}, </if>
+			<if test="orgnId != null">orgn_id = #{orgnId}, </if>
 		</set>
 		where user_id = #{userId}
 	</update>
@@ -86,7 +93,7 @@
 	<select id="getUserListByPostId" resultMap="user">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM sys_user
+		FROM sys_user u
 		<trim prefix="where post_id in">
 			<foreach item="postId" collection="postIds" open="(" close=")" separator=",">
 				#{postId}
@@ -99,7 +106,7 @@
 	<select id="getUserListByOrgnId" resultMap="user">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM sys_user
+		FROM sys_user u
 		<trim prefix="where orgn_id in">
 			<foreach item="orgnId" collection="orgnIds" open="(" close=")" separator=",">
 				#{orgnId}
@@ -117,8 +124,26 @@
 		<result column="orgn_id" property="orgnId"></result>
     </resultMap>
 
+	<resultMap id="userList" type="com.wsd.entity.User">
+		<id column="user_id" property="userId"></id>
+		<result column="create_time" property="createTime"></result>
+		<result column="post_id" property="postId"></result>
+		<result column="orgn_id" property="orgnId"></result>
+		<result column="username" property="username"></result>
+		<result column="password" property="password"></result>
+		<result column="email" property="email"></result>
+		<result column="mobile" property="mobile"></result>
+		<result column="enabled" property="enabled"></result>
+		<result column="name" property="name"></result>
+		<result column="userface" property="userface"></result>
+		<result column="remark" property="remark"></result>
+		<collection property="roleIdList" ofType="Long">
+			<result column="role_id" property="roleId"></result>
+		</collection>
+	</resultMap>
+
 	<!--返回列-->
 	<sql id="Base_Column_List">
-    	user_id, username, password, email, mobile, enabled, name, userface, remark, create_time, post_id, orgn_id
+    	u.user_id, u.username, u.password, u.email, u.mobile, u.enabled, u.name, u.userface, u.remark, u.create_time, u.post_id, u.orgn_id
   	</sql>
 </mapper>

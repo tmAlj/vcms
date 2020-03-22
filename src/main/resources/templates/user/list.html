@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/common/common.css}" media="all">
 </head>
 <body>
     <!--搜索框-->
@@ -18,8 +19,13 @@
         <button class="layui-btn" data-type="reload" id="reload">搜索</button>
         <button class="layui-btn" data-type="reset" id="reset">重置</button>
     </div>
+    <!--工具栏-->
+    <div class="tm-tool">
+        <button class="layui-btn layui-btn-sm" id="add">新增</button>
+        <button class="layui-btn layui-btn-sm" id="delete">删除</button>
+    </div>
     <!--数据列表-->
-    <table class="layui-table" id="dataTable" lay-filter="dataTable"></table>
+    <table class="layui-table tm-table" id="dataTable" lay-filter="dataTable"></table>
 </div>
 <script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
 <script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
@@ -37,13 +43,14 @@
                 table.render({
                     elem: '#dataTable'
                     ,url: '../user/getUserList'
-                    ,toolbar: '#toolbarTmp'
-                    ,defaultToolbar: ['filter', 'exports', 'print']
                     ,cols: [
                         [
                             {type: 'numbers'}
                             ,{checkbox: true}
-                            ,{field:'userId', width:80, title: 'ID', hide: true}
+                            ,{field:'userId', width:80, title: 'userId', hide: true}
+                            ,{field:'postId', width:80, title: 'postId', hide: true}
+                            ,{field:'orgnId', width:80, title: 'orgnId', hide: true}
+                            ,{field:'roleIds', width:80, title: 'roleIds', hide: true}
                             ,{field:'name', width:80, title: '姓名'}
                             ,{field:'username', width:80, title: '账号'}
                             ,{field:'email', width:120, title: '邮箱'}
@@ -65,56 +72,62 @@
                     }
                 });
 
-                /*监听表格头部工具栏事件*/
-                table.on('toolbar(dataTable)', function(obj){
-                    var checkStatus = table.checkStatus(obj.config.id);
-                    switch(obj.event){
-                        case 'add':
-                            //打开弹框,在index中打开
-                            parent.layer.open({
-                                type: 2
-                                ,title: '添加用户'
-                                ,content: 'user/add'
-                                ,maxmin: true
-                                ,area: ['700px', '450px']
-                                ,btn: ['确定', '取消']
-                                ,yes: function(index, layero){
-                                    var iframeWindow = layero.find('iframe')[0].contentWindow
-                                        ,submitID = 'LAY-user-back-submit'
-                                        ,submitFilter = 'LAY-user-front-submit'
-                                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
-                                    //监听提交
-                                    iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
-                                        console.log(data)
-                                        //调用保存用户接口
-                                        var enabled = data.field.enabled == undefined ? 0 : 1;
-                                        data.field["enabled"] = enabled;
-                                        addUserFunction(data.field, index);
-                                    });
-                                    submit.trigger('click');
+                /*工具栏新增按钮点击事件*/
+                $('#add').click(function () {
+                    //打开弹框,在index中打开
+                    parent.layer.open({
+                        type: 2
+                        ,title: '添加用户'
+                        ,content: 'user/add'
+                        ,maxmin: true
+                        ,area: ['700px', '450px']
+                        ,btn: ['确定', '取消']
+                        ,yes: function(index, layero){
+                            var iframeWindow = layero.find('iframe')[0].contentWindow
+                                ,submitID = 'LAY-user-back-submit'
+                                ,submitFilter = 'LAY-user-front-submit'
+                                ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                            //监听提交
+                            iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
+                                //获取角色
+                                var checkboxs = layero.find('iframe').contents().find('.layui-form-checked').prev();
+                                var roles = [];
+                                for (var i = 0; i < checkboxs.length; i++) {
+                                    var role = $(checkboxs[i]).val();
+                                    roles.push(role);
                                 }
+
+                                //调用保存用户接口
+                                var enabled = data.field.enabled == undefined ? 0 : 1;
+                                data.field["enabled"] = enabled;
+                                data.field["roleIdList"] = roles;
+                                getCommonImpl(data.field, index, "../user/addUser");
                             });
-                            break;
-                        case 'delete':
-                            //获取表格数据
-                            var data = checkStatus.data;
-                            if(data.length < 1){
-                                parent.layer.msg("请选择数据后删除",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                            }else{
-                                var formData = [];
-                                if(data.length != 0){
-                                    //获取多选用户ID数组
-                                    for (var i = 0; i < data.length; i++){
-                                        formData.push(data[i].userId)
-                                    }
-                                    parent.layer.confirm('确定删除?', function(index){
-                                        //调用删除用户接口
-                                        deleteUserFunction(formData, index);
-                                    });
-                                }
+                            submit.trigger('click');
+                        }
+                    });
+                });
+
+                /*工具栏删除按钮点击事件*/
+                $('#delete').click(function () {
+                    var checkStatus = table.checkStatus("dataTable");
+                    //获取表格数据
+                    var data = checkStatus.data;
+                    if(data.length < 1){
+                        parent.layer.msg("请选择数据后删除",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
+                    }else{
+                        var formData = [];
+                        if(data.length != 0){
+                            //获取多选用户ID数组
+                            for (var i = 0; i < data.length; i++){
+                                formData.push(data[i].userId)
                             }
-                            break;
-                    };
+                            parent.layer.confirm('确定删除?', function(index){
+                                //调用删除用户接口
+                                getCommonImpl(formData, index, "../user/deleteUser");
+                            });
+                        }
+                    }
                 });
 
                 /*监听表格行操作列按钮事件*/
@@ -125,14 +138,16 @@
                             var formData = [];
                             formData.push(data.userId);
                             //调用删除用户接口
-                            deleteUserFunction(formData, index);
+                            getCommonImpl(formData, index, "../user/deleteUser");
                         });
                     } else if(obj.event === 'edit'){
+                        var roleIds = JSON.stringify(data.roleIdList);
+                        console.log(roleIds)
                         //打开弹框,在index中打开
                         parent.layer.open({
                             type: 2
                             ,title: '修改用户'
-                            ,content: 'user/update'
+                            ,content: 'user/update/?postId=' + data.postId + '&orgnId=' + data.orgnId + '&roleIds=' + roleIds
                             ,maxmin: true
                             ,area: ['700px', '450px']
                             ,btn: ['确定', '取消']
@@ -143,16 +158,24 @@
                                     ,submit = layero.find('iframe').contents().find('#'+ submitID);
                                 //监听提交
                                 iframeWindow.layui.form.on('submit('+ submitFilter +')',function(data){
-                                    console.log(data)
+                                    //获取角色
+                                    var checkboxs = layero.find('iframe').contents().find('.layui-form-checked').prev();
+                                    var roles = [];
+                                    for (var i = 0; i < checkboxs.length; i++) {
+                                        var role = $(checkboxs[i]).val();
+                                        roles.push(role);
+                                    }
                                     //switch开关选中时获取的值未no，未选中时未""
                                     var enabled = data.field.enabled == undefined ? 0 : 1;
                                     data.field["enabled"] = enabled;
+                                    data.field["roleIdList"] = roles;
                                     //调用保存用户接口
-                                    updateUserFunction(data.field, index);
+                                    getCommonImpl(data.field, index, "../user/updateUser");
                                 });
                                 submit.trigger('click');
                             }
                             ,success: function (layero, index) {
+                                console.log(data)
                                 //获取弹框中的表单
                                 var form = layero.find('iframe')[0].contentWindow.layui.form;
                                 //编辑表单赋值
@@ -163,6 +186,8 @@
                                 layero.find('iframe').contents().find('#mobile').val(data.mobile);
                                 layero.find('iframe').contents().find('#remark').val(data.remark);
                                 layero.find('iframe').contents().find('#enabled').prop("checked",data.enabled);
+                                /*layero.find('iframe').contents().find('#postId').val(data.postId);
+                                layero.find('iframe').contents().find('#orgnId').val(data.orgnId);*/
                                 //刷新表单
                                 form.render("checkbox");
                             }
@@ -170,7 +195,7 @@
                     }else if(obj.event === 'reset'){
                         parent.layer.confirm('确定重置密码?', function(index){
                             //调用重置用户密码接口
-                            resetUserFunction(data, index);
+                            getCommonImpl(data, index, "../user/resetUser");
                         });
                     }
                 });
@@ -195,99 +220,9 @@
                 });
             });
 
-            /*新增用户接口*/
-            function addUserFunction(formData, index) {
-                var url = contextPath + "../user/addUser";
-                //数据加载弹出层
-                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
-                $.ajax({
-                    type: 'POST',
-                    async: false,
-                    url: url,
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    contentType:"application/json",
-                    success: function(data) {
-                        parent.layer.close(loadingMsg);
-                        if (data.code == 0) {
-                            parent.layer.close(index);
-                            //刷新表格
-                            table.reload('dataTable');
-                        } else {
-                            var msg = data.msg;
-                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                        }
-                    },
-                    error: function() {
-                        parent.layer.close(loadingMsg);
-                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                    }
-                });
-            }
-
-            /*删除用户接口*/
-            function deleteUserFunction(formData, index) {
-                var url = contextPath + "../user/deleteUser";
-                //数据加载弹出层
-                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
-                $.ajax({
-                    type: 'POST',
-                    async: false,
-                    url: url,
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    contentType:"application/json",
-                    success: function(data) {
-                        parent.layer.close(loadingMsg);
-                        if (data.code == 0) {
-                            parent.layer.close(index);
-                            //刷新表格
-                            table.reload('dataTable');
-                        } else {
-                            var msg = data.msg;
-                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                        }
-                    },
-                    error: function() {
-                        parent.layer.close(loadingMsg);
-                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                    }
-                });
-            }
-
-            /*更新用户接口*/
-            function updateUserFunction(formData, index) {
-                var url = contextPath + "../user/updateUser";
-                //数据加载弹出层
-                var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
-                $.ajax({
-                    type: 'POST',
-                    async: false,
-                    url: url,
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    contentType:"application/json",
-                    success: function(data) {
-                        parent.layer.close(loadingMsg);
-                        if (data.code == 0) {
-                            parent.layer.close(index);
-                            //刷新表格
-                            table.reload('dataTable');
-                        } else {
-                            var msg = data.msg;
-                            parent.layer.msg(msg,{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                        }
-                    },
-                    error: function() {
-                        parent.layer.close(loadingMsg);
-                        parent.layer.msg("数据请求发生异常,请稍后重试",{offset: 'rb', time: 2000, anim: 6, icon: 5,scrollbar: false});
-                    }
-                });
-            }
-
-            /*重置用户密码接口*/
-            function resetUserFunction(formData, index) {
-                var url = contextPath + "../user/resetUser";
+            /*统一调用后台接口*/
+            function getCommonImpl(formData, index, url) {
+                var url = contextPath + url;
                 //数据加载弹出层
                 var loadingMsg = parent.layer.msg("数据请求中,请稍候...", {icon: 16,scrollbar: false,time: 0,shade: [0.5, '#393D49']});
                 $.ajax({
@@ -321,13 +256,6 @@
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="reset">重置密码</a>
-    </script>
-    <!--表格头部工具栏-->
-    <script type="text/html" id="toolbarTmp">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
-            <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
-        </div>
     </script>
     <!--是否启用栏-->
     <script type="text/html" id="enabledTmp">

@@ -8,12 +8,10 @@ import com.wsd.utils.ResultData;
 import com.wsd.utils.SecurityUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -58,8 +56,11 @@ public class UserController {
      * @return
      */
     @GetMapping("/user/update")
-    public ModelAndView update() {
+    public ModelAndView update(@PathParam("postId") String postId, @PathParam("orgnId") String orgnId, @PathParam("roleIds") String roleIds) {
         ModelAndView mv = new ModelAndView();
+        mv.addObject("postId", postId);
+        mv.addObject("orgnId", orgnId);
+        mv.addObject("roleIds", roleIds);
         mv.setViewName("user/update");
         return mv;
     }

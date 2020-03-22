@@ -14,16 +14,17 @@
     <input type="hidden" name="roleId" lay-verify="" autocomplete="off" class="layui-input" id="roleId">
 
     <div class="layui-form-item">
-        <label class="layui-form-label">角色名称</label>
+        <label class="layui-form-label">角色名称<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="name" lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input" lay-verType="tips" id="name">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">角色标识</label>
+        <label class="layui-form-label">角色标识<span style="color: red">*</span></label>
         <div class="layui-input-inline">
             <input type="text" name="roleName" lay-verify="required" placeholder="角色标识" autocomplete="off" class="layui-input" lay-verType="tips" id="roleName" disabled>
         </div>
+        <div class="layui-form-mid layui-word-aux">以ROLE_为前缀</div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">备注</label>

@@ -33,9 +33,19 @@ public class User implements UserDetails {
     private String remark;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime; //创建时间
-    private List<Role> roleList; //用户角色id列表
+    private List<Role> roleList; //用户角色列表
     private Long orgnId;
     private Long postId;
+
+    private List<Long> roleIdList;
+
+    public List<Long> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<Long> roleIdList) {
+        this.roleIdList = roleIdList;
+    }
 
     public Long getOrgnId() {
         return orgnId;

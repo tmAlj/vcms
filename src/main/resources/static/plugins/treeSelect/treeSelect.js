@@ -244,6 +244,7 @@ function(c,a,b,f){(!a||!d.isHidden(c,a))&&s.apply(e,arguments)};var t=e.repairPa
           headers: headers,
           dataType: 'json',
           success: function (d) {
+            d = d.orgnList;
             DATA = d;
             a.hideElem().input().toggleSelect().loadCss().preventEvent();
             $.fn.zTree.init($('#' + TREE_SELECT_BODY_ID), a.setting(), d);
@@ -528,13 +529,28 @@ function(c,a,b,f){(!a||!d.isHidden(c,a))&&s.apply(e,arguments)};var t=e.repairPa
     var o = obj.filter(filter),
         treeInput = o.find('.layui-select-title input'),
         treeObj = obj.treeObj(filter),
-        node = treeObj.getNodeByParam("id", id, null),
+        node = treeObj.getNodeByParam("orgnId", id, null),
         name = node.name;
     treeInput.val(name);
     o.find('a[treenode_a]').removeClass('curSelectedNode');
     obj.get(filter).val(id).attr('value', id);
     treeObj.selectNode(node);
   };
+
+    /**
+     * 选中节点，因为tree是异步加载，所以必须在success回调中调用checkNode函数，否则无法获取生成的DOM元素
+     * @param filter lay-filter属性
+     * @param id 选中的id
+     */
+    TreeSelect.prototype.checkNodes1 = function(filter, id,treeId){
+        var newTreeId = treeId.replace('layui-treeSelect','layui-treeSelect-body');
+        var inputId = treeId.replace('layui-treeSelect','treeSelect-input');
+        var treeObj = $.fn.zTree.getZTreeObj(newTreeId);
+        var node = treeObj.getNodeByParam("id", id, null);
+        var treeInput = $("#"+inputId);
+        treeInput.val(node.name);
+        treeObj.selectNode(node);
+    }
 
   /**
    * 撤销选中的节点

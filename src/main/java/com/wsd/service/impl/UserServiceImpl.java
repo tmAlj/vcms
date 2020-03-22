@@ -3,8 +3,10 @@ package com.wsd.service.impl;
 import com.wsd.entity.Menu;
 import com.wsd.entity.User;
 import com.wsd.mapper.MenuMapper;
+import com.wsd.mapper.UserAndRoleMapper;
 import com.wsd.mapper.UserMapper;
 import com.wsd.service.MenuService;
+import com.wsd.service.UserAndRoleService;
 import com.wsd.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserAndRoleService userAndRoleService;
 
     /**
      * 查询用户列表
@@ -59,6 +63,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passward);
         user.setCreateTime(new Date());
         userMapper.save(user);
+        //保存角色
+        userAndRoleService.addOrUpdateRole(user.getUserId(), user.getRoleIdList());
     }
 
     /**
@@ -77,6 +83,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(User user){
         userMapper.update(user);
+        //保存角色
+        userAndRoleService.addOrUpdateRole(user.getUserId(), user.getRoleIdList());
     }
 
     /**

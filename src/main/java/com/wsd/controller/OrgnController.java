@@ -74,6 +74,16 @@ public class OrgnController {
         return ResultData.ok().put("orgnList", orgnList);
     }
 
+/*    *//**
+     * 查询组织列表
+     *//*
+    @GetMapping("/orgn/getOrgnList1")
+    public List<Orgn> getOrgnList1(){
+        List<Orgn> orgnList = orgnService.getOrgnList();
+        return orgnList;
+    }*/
+
+
     /**
      * 新增组织
      * @return
