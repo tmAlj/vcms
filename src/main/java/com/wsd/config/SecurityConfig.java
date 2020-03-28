@@ -80,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /*过滤静态资源*/
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/static/**", "/favicon.ico", "/login_p", "/captcha.jpg");
+        web.ignoring().antMatchers("/static/**", "/favicon.ico", "/login_p", "/captcha.jpg","/swagger-ui.html");
     }
 
     @Override
