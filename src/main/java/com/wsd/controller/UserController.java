@@ -2,12 +2,14 @@ package com.wsd.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.User;
 import com.wsd.service.UserService;
 import com.wsd.utils.ResultData;
 import com.wsd.utils.SecurityUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,6 +30,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    SessionRegistry sessionRegistry;
 
     /**
      * 用户列表页面
@@ -71,6 +75,10 @@ public class UserController {
      */
     @GetMapping("/user/getUserList")
     public ResultData getUserList(Integer page, Integer limit, String name){
+
+        sessionRegistry.getAllPrincipals();
+
+
         User user = new User();
         user.setName(name);
         PageHelper.startPage(page, limit);
@@ -84,6 +92,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/addUser")
+    @ControllerLog(model = "用户模块", type = "新增", describe = "用户新增")
     public ResultData addUser(@RequestBody User user){
         //判断用户名称是否可用
         User u = userService.getUserByUsername(user.getUsername());
@@ -99,6 +108,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/deleteUser")
+    @ControllerLog(model = "用户模块", type = "删除", describe = "用户删除")
     public ResultData deleteUser(@RequestBody Long[] userIdList){
         Long userId = SecurityUtils.getCurrentUserInfo().getUserId();
         if(ArrayUtils.contains(userIdList, 1L)){
@@ -116,6 +126,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/updateUser")
+    @ControllerLog(model = "用户模块", type = "修改", describe = "用户修改")
     public ResultData updateUser(@RequestBody User user){
         userService.updateUser(user);
         return ResultData.ok();
@@ -126,6 +137,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/resetUser")
+    @ControllerLog(model = "用户模块", type = "修改", describe = "用户重置")
     public ResultData resetUser(@RequestBody User user){
         userService.resetUser(user);
         return ResultData.ok();

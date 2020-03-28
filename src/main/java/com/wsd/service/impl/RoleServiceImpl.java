@@ -14,7 +14,6 @@ import java.util.List;
  * 系统角色service
  */
 @Service
-@Transactional
 public class RoleServiceImpl implements RoleService {
 
     @Autowired

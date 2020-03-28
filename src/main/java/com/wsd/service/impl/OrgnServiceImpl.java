@@ -16,7 +16,6 @@ import java.util.List;
  * 系统组织service
  */
 @Service
-@Transactional
 public class OrgnServiceImpl implements OrgnService {
 
     @Autowired

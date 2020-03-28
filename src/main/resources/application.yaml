@@ -1,9 +1,9 @@
 spring:
-  mvc:
+  mvc:  #静态资源路径
     static-path-pattern: /static/**
   resources:
     static-locations: classpath:/static/
-  thymeleaf:
+  thymeleaf:  #thymeleaf模板引擎
     cache: true
     check-template: true
     check-template-location: true
@@ -12,21 +12,24 @@ spring:
     servlet:
       content-type: text/html
     suffix: .html
-  datasource:
+  datasource: #数据源
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/vcms?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: root
     password: root
-mybatis:
+  aop:  #aop
+    proxy-target-class: true
+    auto: true
+mybatis:  #mybatis
   mapper-locations: classpath:mapper/*Mapper.xml
   config-location: classpath:config/sqlMapConfig.xml
-pagehelper:
+pagehelper: #pagehelper分页插件
   helperDialect: mysql
   reasonable: true
   supportMethodsArguments: true
 server:
   servlet:
-    context-path: /vcms
-logging:
+    context-path: /vcms #项目上下文名称
+logging:  #控制台打印sql执行日志
   level:
     com.wsd.mapper : debug

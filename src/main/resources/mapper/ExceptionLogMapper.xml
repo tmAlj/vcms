@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--系统异常日志mapper-->
+<mapper namespace="com.wsd.mapper.ExceptionLogMapper">
+
+    <!--查询异常日志列表-->
+    <select id="getExceptionLogList" resultMap="exceptionLog">
+        SELECT
+		<include refid="Base_Column_List"/>,
+		FROM sys_exception_log WHERE 1=1
+        ORDER BY create_time DESC
+    </select>
+
+    <!--新增登录日志-->
+    <insert id="save" parameterType="com.wsd.entity.ExceptionLog" useGeneratedKeys="true" keyProperty="exception_id">
+		insert into sys_exception_log
+		(
+			exception_id,
+			request_param,
+			name,
+			message,
+			user_id,
+			user_name,
+			method,
+			uri,
+			ip,
+			create_time
+		)
+		values
+		(
+			#{exceptionId},
+			#{requestParam},
+			#{name},
+			#{message},
+			#{userId},
+			#{userName},
+			#{method},
+			#{uri},
+			#{ip},
+			#{createTime}
+		)
+	</insert>
+
+	<!--删除登录日志-->
+	<delete id="deleteExceptionLog">
+		delete from sys_exception_log
+		<trim prefix="where exception_id in">
+			<foreach item="exceptionId" collection="exceptionIds" open="(" close=")" separator=",">
+				#{exceptionId}
+			</foreach>
+		</trim>
+	</delete>
+
+	<!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="exceptionLog" type="com.wsd.entity.ExceptionLog">
+        <id column="exception_id" property="exceptionId"></id>
+        <result column="request_param" property="requestParam"></result>
+		<result column="user_id" property="userId"></result>
+		<result column="user_name" property="userName"></result>
+		<result column="create_time" property="createTime"></result>
+    </resultMap>
+
+	<!--返回列-->
+	<sql id="Base_Column_List">
+    	exception_id, request_param, name, message, user_id, user_name, method, uri, ip, create_time
+  	</sql>
+</mapper>

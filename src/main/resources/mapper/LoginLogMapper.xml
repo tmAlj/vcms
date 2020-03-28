@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--系统登录日志mapper-->
+<mapper namespace="com.wsd.mapper.LoginLogMapper">
+
+    <!--查询登录日志列表-->
+    <select id="getLoginLogList" resultMap="loginLog">
+        SELECT
+		<include refid="Base_Column_List"/>,
+		FROM sys_login_log u WHERE 1=1
+        <if test="loginLog.userName != '' and loginLog.userName != null">
+			AND user_name like concat('%',#{loginLog.userName},'%')
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!--新增登录日志-->
+    <insert id="save" parameterType="com.wsd.entity.LoginLog" useGeneratedKeys="true" keyProperty="login_id">
+		insert into sys_login_log
+		(
+			login_id,
+			user_name,
+			ip,
+			browser,
+			system,
+			location,
+			create_time,
+			info,
+			host_name
+		)
+		values
+		(
+			#{loginId},
+			#{userName},
+			#{ip},
+			#{browser},
+			#{system},
+			#{location},
+			#{createTime},
+			#{info},
+			#{hostName}
+		)
+	</insert>
+
+	<!--删除登录日志-->
+	<delete id="deleteLoginLog">
+		delete from sys_login_log
+		<trim prefix="where login_id in">
+			<foreach item="loginId" collection="loginIds" open="(" close=")" separator=",">
+				#{loginId}
+			</foreach>
+		</trim>
+	</delete>
+
+	<!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="loginLog" type="com.wsd.entity.LoginLog">
+        <id column="login_id" property="loginId"></id>
+        <result column="user_name" property="userName"></result>
+		<result column="create_time" property="createTime"></result>
+		<result column="host_name" property="hostName"></result>
+    </resultMap>
+
+	<!--返回列-->
+	<sql id="Base_Column_List">
+    	login_id, user_name, ip, browser, system, location, create_time, info, host_name
+  	</sql>
+</mapper>

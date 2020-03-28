@@ -16,7 +16,6 @@ import java.util.List;
  * 系统菜单service
  */
 @Service
-@Transactional
 public class MenuServiceImpl implements MenuService {
 
     @Autowired

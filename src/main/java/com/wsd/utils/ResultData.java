@@ -7,6 +7,7 @@ import java.util.Map;
  * 返回前台数据工具类
  */
 public class ResultData extends HashMap<String, Object> {
+
     public ResultData() {
         put("code", 0);
     }
@@ -42,6 +43,7 @@ public class ResultData extends HashMap<String, Object> {
         return new ResultData();
     }
 
+    @Override
     public ResultData put(String key, Object value) {
         super.put(key, value);
         return this;

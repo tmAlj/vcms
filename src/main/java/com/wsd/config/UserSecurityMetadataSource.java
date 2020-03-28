@@ -21,7 +21,7 @@ import java.util.List;
 public class UserSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
-    MenuService ms;
+    MenuService menuService;
 
     //获取url匹配器
     AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -31,10 +31,10 @@ public class UserSecurityMetadataSource implements FilterInvocationSecurityMetad
         //获取当前请求的url
         String requestUrl = ((FilterInvocation) object).getRequestUrl();
         //获取所有菜单
-        List<Menu> menuList = ms.getAllMenu();
+        List<Menu> menuList = menuService.getAllMenu();
         for (Menu menu : menuList) {
             //判断当前请求的url是否与菜单url匹配
-            if (antPathMatcher.match(menu.getUrl(), requestUrl) && menu.getRoleList().size() > 0) {
+            if (antPathMatcher.match("/" + menu.getUrl(), requestUrl) && menu.getRoleList().size() > 0) {
                 List<Role> roleList = menu.getRoleList();
                 int size = roleList.size();
                 String[] values = new String[size];
@@ -58,4 +58,5 @@ public class UserSecurityMetadataSource implements FilterInvocationSecurityMetad
     public boolean supports(Class<?> aClass) {
         return FilterInvocation.class.isAssignableFrom(aClass);
     }
+
 }

@@ -22,7 +22,6 @@ import java.util.List;
  * 系统用户serviceImpl
  */
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -55,6 +54,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
+    @Transactional
     @Override
     public void addUser(User user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService {
      * 修改用户
      * @param user
      */
+    @Transactional
     @Override
     public void updateUser(User user){
         userMapper.update(user);

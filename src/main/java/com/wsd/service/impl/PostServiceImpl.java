@@ -18,7 +18,6 @@ import java.util.List;
  * 系统职位serviceImpl
  */
 @Service
-@Transactional
 public class PostServiceImpl implements PostService {
 
     @Autowired

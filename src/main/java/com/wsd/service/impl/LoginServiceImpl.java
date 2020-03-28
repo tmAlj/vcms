@@ -17,7 +17,6 @@ import java.util.List;
  * 用户service
  */
 @Service
-@Transactional
 public class LoginServiceImpl implements UserDetailsService {
 
     //注入用户mapper

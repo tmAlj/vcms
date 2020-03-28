@@ -22,7 +22,6 @@ import java.util.Map;
  * @updateDate 2020-3-3 16:05
  */
 @Service
-@Transactional
 public class RoleAndMenuServiceImpl implements RoleAndMenuService {
 
     @Autowired
@@ -38,6 +37,11 @@ public class RoleAndMenuServiceImpl implements RoleAndMenuService {
         return roleAndMenuMapper.getMenuIdsByRoleId(roleId);
     }
 
+    /**
+     * 修改角色菜单
+     * @param role
+     */
+    @Transactional
     @Override
     public void updateRoleAndMenu(Role role) {
 

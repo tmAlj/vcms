@@ -16,5 +16,4 @@ public class SecurityUtils {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-
 }

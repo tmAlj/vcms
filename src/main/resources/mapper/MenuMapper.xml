@@ -8,9 +8,8 @@
         SELECT
             m.*, l.*
         FROM
-            sys_menu m
-        LEFT JOIN sys_role_menu r ON m.menu_id = r.menu_id
-        LEFT JOIN sys_role l ON r.role_id = l.role_id
+            sys_menu m, sys_role_menu r, sys_role l
+        WHERE m.menu_id = r.menu_id and r.role_id = l.role_id
         ORDER BY
             m.order_num ASC
     </select>
@@ -111,12 +110,13 @@
         <result column="name" property="name"></result>
         <result column="url" property="url"></result>
         <result column="icon" property="icon"></result>
-        <!--<collection property="roleList" ofType="com.wsd.entity.Role">
+        <collection property="roleList" ofType="com.wsd.entity.Role">
             <id column="role_id" property="roleId"></id>
             <result column="role_name" property="roleName"></result>
             <result column="create_time" property="createTime"></result>
             <result column="remark" property="remark"></result>
-        </collection>-->
+            <result column="name" property="name"></result>
+        </collection>
     </resultMap>
 
     <!--子菜单返回结果集-->

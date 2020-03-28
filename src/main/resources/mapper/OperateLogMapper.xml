@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--系统操作日志mapper-->
+<mapper namespace="com.wsd.mapper.OperateLogMapper">
+
+    <!--查询操作日志列表-->
+    <select id="getOperateLogList" resultMap="operateLog">
+        SELECT
+		<include refid="Base_Column_List"/>,
+		FROM sys_operate_log WHERE 1=1
+        ORDER BY create_time DESC
+    </select>
+
+    <!--新增操作日志-->
+    <insert id="save" parameterType="com.wsd.entity.OperateLog" useGeneratedKeys="true" keyProperty="operate_id">
+		insert into sys_operate_log
+		(
+			operate_id,
+			model,
+			type,
+			details,
+			request_param,
+			response_param,
+			user_id,
+			user_name,
+			method,
+			uri,
+			ip,
+			create_time
+		)
+		values
+		(
+			#{operateId},
+			#{model},
+			#{type},
+			#{details},
+			#{requestParam},
+			#{responseParam},
+			#{userId},
+			#{userName},
+			#{method},
+			#{uri},
+			#{ip},
+			#{createTime}
+		)
+	</insert>
+
+	<!--删除操作日志-->
+	<delete id="deleteOperateLog">
+		delete from sys_operate_log
+		<trim prefix="where operate_id in">
+			<foreach item="operateId" collection="operateIds" open="(" close=")" separator=",">
+				#{operateId}
+			</foreach>
+		</trim>
+	</delete>
+
+	<!--返回结果集字段匹配，如果实体与数据库字段名称一样可不配置-->
+    <resultMap id="operateLog" type="com.wsd.entity.OperateLog">
+        <id column="operate_id" property="operateId"></id>
+		<result column="request_param" property="requestParam"></result>
+		<result column="response_param" property="responseParam"></result>
+		<result column="user_id" property="userId"></result>
+		<result column="user_name" property="userName"></result>
+		<result column="create_time" property="createTime"></result>
+    </resultMap>
+
+	<!--返回列-->
+	<sql id="Base_Column_List">
+    	operate_id, model, type, details, request_param, response_param, user_id, user_name, method, uri, ip, create_time
+  	</sql>
+</mapper>

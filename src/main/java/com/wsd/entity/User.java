@@ -182,4 +182,20 @@ public class User implements UserDetails {
     public void setRoleList(List<Role> roleList) {
         this.roleList = roleList;
     }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.toString().equals(obj.toString());
+    }
+
 }
