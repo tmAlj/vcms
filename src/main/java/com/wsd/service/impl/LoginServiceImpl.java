@@ -14,7 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 用户service
+ * @author tm
+ * @version 1.0.0
+ * @description 系统用户serviceImpl
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 @Service
 public class LoginServiceImpl implements UserDetailsService {

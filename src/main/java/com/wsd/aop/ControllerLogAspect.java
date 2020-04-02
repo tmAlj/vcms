@@ -55,15 +55,6 @@ public class ControllerLogAspect {
    @Pointcut("execution(* com.wsd.controller..*.*(..))")
    public void exceptionPointcut(){}
 
-    @Around("OperatePointcut()")
-    public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result = null;
-
-        result = joinPoint.proceed();
-
-        return result;
-    }
-
     /**
      * 方法执行成功后通知
      * @param joinPoint

@@ -3,14 +3,28 @@ package com.wsd.entity;
 import java.io.Serializable;
 
 /**
- * Created by tm on 2018/8/28.
- * 系统用户角色实体类
+ * @author tm
+ * @version 1.0.0
+ * @description 系统用户角色实体类
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 public class UserAndRole implements Serializable {
 
-    private Long id; //id
-    private Long userId; //用户id
-    private Long roleId; //角色id
+    /**
+     * id
+     */
+    private Long id;
+    /**
+     * 用户id
+     */
+    private Long userId; 
+    /**
+     * 角色id
+     */
+    private Long roleId;
 
     public Long getId() {
         return id;

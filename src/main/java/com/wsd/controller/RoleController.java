@@ -2,6 +2,7 @@ package com.wsd.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.Role;
 import com.wsd.entity.User;
 import com.wsd.service.RoleAndMenuService;
@@ -97,6 +98,7 @@ public class RoleController {
      * @return
      */
     @PostMapping("/role/addRole")
+    @ControllerLog(model = "角色模块", type = "新增", describe = "角色新增")
     public ResultData addRole(@RequestBody Role role){
         //判断角色标识是否可用
         Role role1 = roleService.getRole(role);
@@ -112,6 +114,7 @@ public class RoleController {
      * @return
      */
     @PostMapping("/role/deleteRole")
+    @ControllerLog(model = "角色模块", type = "删除", describe = "角色删除")
     public ResultData deleteRole(@RequestBody Long[] roleIdList){
         if(ArrayUtils.contains(roleIdList, 1L)){
             return ResultData.error("系统管理员角色不能删除");
@@ -126,6 +129,7 @@ public class RoleController {
      * @return
      */
     @PostMapping("/role/updateRole")
+    @ControllerLog(model = "角色模块", type = "修改", describe = "角色修改")
     public ResultData updateRole(@RequestBody Role role){
         roleService.updateRole(role);
         return ResultData.ok();

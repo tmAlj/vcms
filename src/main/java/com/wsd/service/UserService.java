@@ -1,13 +1,17 @@
 package com.wsd.service;
 
-import com.wsd.entity.Role;
 import com.wsd.entity.User;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
- * 系统用户service
+ * @author tm
+ * @version 1.0.0
+ * @description 系统用户service
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 public interface UserService {
 

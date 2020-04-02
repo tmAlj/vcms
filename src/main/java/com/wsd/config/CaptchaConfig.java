@@ -8,7 +8,13 @@ import org.springframework.stereotype.Component;
 import java.util.Properties;
 
 /**
- * kaptcha验证码配置类
+ * @author tm
+ * @version 1.0.0
+ * @description kaptcha验证码配置类
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-15 13:34
+ * @updateDate 2020-3-15 13:34
  */
 @Component
 public class CaptchaConfig {

@@ -8,7 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 系统登录日志mapper
+ * @author tm
+ * @version 1.0.0
+ * @description 系统登录日志mapper
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 @Repository
 public interface LoginLogMapper extends BaseMapper<LoginLog>{

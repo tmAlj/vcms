@@ -11,7 +11,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 系统角色service
+ * @author tm
+ * @version 1.0.0
+ * @description 系统角色serviceImpl
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 @Service
 public class RoleServiceImpl implements RoleService {

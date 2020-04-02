@@ -41,7 +41,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
- * spring security配置类
+ * @author tm
+ * @version 1.0.0
+ * @description spring security配置类
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-15 13:34
+ * @updateDate 2020-3-15 13:34
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)

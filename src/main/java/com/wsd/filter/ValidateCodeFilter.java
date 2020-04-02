@@ -15,7 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 图片验证码过滤器
+ * @author tm
+ * @version 1.0.0
+ * @description 图片验证码过滤器
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 @Component
 public class ValidateCodeFilter extends OncePerRequestFilter {

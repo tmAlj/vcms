@@ -1,5 +1,6 @@
 package com.wsd.controller;
 
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.Menu;
 import com.wsd.service.MenuService;
 import com.wsd.utils.ResultData;
@@ -94,6 +95,7 @@ public class MenuController {
      * @return
      */
     @PostMapping("/menu/addMenu")
+    @ControllerLog(model = "菜单模块", type = "新增", describe = "菜单新增")
     public ResultData addMenu(@RequestBody Menu menu){
         menuService.addMenu(menu);
         return ResultData.ok();
@@ -104,6 +106,7 @@ public class MenuController {
      * @return
      */
     @PostMapping("/menu/deleteMenu")
+    @ControllerLog(model = "菜单模块", type = "删除", describe = "菜单删除")
     public ResultData deleteMenu(@RequestBody Long[] menuIdList){
         for(Long menuId : menuIdList){
             if(menuId.longValue() <= 16){
@@ -120,6 +123,7 @@ public class MenuController {
      * @return
      */
     @PostMapping("/menu/updateMenu")
+    @ControllerLog(model = "菜单模块", type = "修改", describe = "菜单修改")
     public ResultData updateRole(@RequestBody Menu menu){
         menuService.updateMenu(menu);
         return ResultData.ok();

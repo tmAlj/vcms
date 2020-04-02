@@ -13,7 +13,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * 比对用户的权限
+ * @author tm
+ * @version 1.0.0
+ * @description 比对用户的权限
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-15 13:34
+ * @updateDate 2020-3-15 13:34
  */
 @Component
 public class UserAccessDecisionManager implements AccessDecisionManager {

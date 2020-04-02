@@ -4,7 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 返回前台数据工具类
+ * @author tm
+ * @version 1.0.0
+ * @description 返回前台数据工具类
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 public class ResultData extends HashMap<String, Object> {
 

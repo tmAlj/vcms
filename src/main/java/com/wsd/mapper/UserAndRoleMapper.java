@@ -1,6 +1,5 @@
 package com.wsd.mapper;
 
-import com.wsd.entity.Role;
 import com.wsd.entity.UserAndRole;
 import org.springframework.stereotype.Repository;
 

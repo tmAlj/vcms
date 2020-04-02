@@ -16,14 +16,31 @@ import java.util.List;
  * @updateDate 2020-3-3 16:05
  */
 public class Role implements Serializable {
-
-    private Long roleId; //角色id
-    private String roleName; //角色标识
-    private String name; //角色名称
-    private String remark; //备注
-    private List<Long> menuIdList; //菜单id列表
+    /**
+     * 角色id
+     */
+    private Long roleId;
+    /**
+     * 角色标识
+     */
+    private String roleName;
+    /**
+     * 角色名称
+     */
+    private String name;
+    /**
+     * /备注
+     */
+    private String remark;
+    /**
+     * 菜单id列表
+     */
+    private List<Long> menuIdList;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date createTime; //创建时间
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
     public Long getRoleId() {
         return roleId;

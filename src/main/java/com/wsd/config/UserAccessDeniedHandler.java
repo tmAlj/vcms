@@ -11,7 +11,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 权限异常处理
+ * @author tm
+ * @version 1.0.0
+ * @description 比对用户的权限
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-15 13:34
+ * @updateDate 2020-3-15 13:34
  */
 @Component
 public class UserAccessDeniedHandler implements AccessDeniedHandler {

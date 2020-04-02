@@ -24,7 +24,13 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 用户controller
+ * @author tm
+ * @version 1.0.0
+ * @description 登录controller
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-15 13:34
+ * @updateDate 2020-3-15 13:34
  */
 @RestController
 public class LoginController {

@@ -75,10 +75,6 @@ public class UserController {
      */
     @GetMapping("/user/getUserList")
     public ResultData getUserList(Integer page, Integer limit, String name){
-
-        sessionRegistry.getAllPrincipals();
-
-
         User user = new User();
         user.setName(name);
         PageHelper.startPage(page, limit);

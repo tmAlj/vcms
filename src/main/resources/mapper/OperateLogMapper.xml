@@ -6,7 +6,7 @@
     <!--查询操作日志列表-->
     <select id="getOperateLogList" resultMap="operateLog">
         SELECT
-		<include refid="Base_Column_List"/>,
+		<include refid="Base_Column_List"/>
 		FROM sys_operate_log WHERE 1=1
         ORDER BY create_time DESC
     </select>

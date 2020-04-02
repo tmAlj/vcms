@@ -2,6 +2,7 @@ package com.wsd.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.Post;
 import com.wsd.entity.User;
 import com.wsd.service.PostService;
@@ -85,6 +86,7 @@ public class PostController {
      * @return
      */
     @PostMapping("/post/addPost")
+    @ControllerLog(model = "职位模块", type = "新增", describe = "职位新增")
     public ResultData addPost(@RequestBody Post post){
         postService.addPost(post);
         return ResultData.ok();
@@ -95,6 +97,7 @@ public class PostController {
      * @return
      */
     @PostMapping("/post/deletePost")
+    @ControllerLog(model = "职位模块", type = "删除", describe = "职位删除")
     public ResultData deletePost(@RequestBody Long[] postIds){
         //验证该职位是否被使用
         List<User> userList = userService.getUserListByPostId(postIds);
@@ -110,6 +113,7 @@ public class PostController {
      * @return
      */
     @PostMapping("/post/updatePost")
+    @ControllerLog(model = "职位模块", type = "修改", describe = "职位修改")
     public ResultData updatePost(@RequestBody Post post){
         postService.updatePost(post);
         return ResultData.ok();

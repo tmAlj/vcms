@@ -12,7 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 系统操作日志serviceImpl
+ * @author tm
+ * @version 1.0.0
+ * @description 系统操作日志serviceImpl
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 @Service
 public class ExceptionLogServiceImpl implements ExceptionLogService {

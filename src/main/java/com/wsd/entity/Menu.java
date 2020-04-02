@@ -17,21 +17,51 @@ import java.util.List;
  */
 public class Menu implements Serializable {
 
-    private Long menuId; //菜单ID
-    private Long parentId; //父菜单ID，一级菜单为0
-    private String parentName; //父菜单名称
-    private String name; //菜单名称
-    private String url; //菜单URL
+    /***
+     * 菜单id
+     */
+    private Long menuId;
+    /**
+     * 父菜单id，一级菜单为0
+     */
+    private Long parentId;
+    /**
+     * 父菜单名称
+     */
+    private String parentName;
+    /**
+     * 菜单名称
+     */
+    private String name;
+    /**
+     * 菜单URL
+     */
+    private String url;
     //private String perms; //授权(多个用逗号分隔，如：user:list,user:create)
     //private Integer type; //资源类型 0：目录 1：菜单 2：按钮
-    private String icon; //菜单图标
-    private Integer orderNum; //排序
+    /**
+     * icon
+     */
+    private String icon;
+    /**
+     * 排序
+     */
+    private Integer orderNum;
     //private Boolean open; //ztree属性
     //private Boolean enabled; //状态  0：禁用   1：正常
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date createTime; //创建时间
-    private List<Menu> menulist; //菜单列表
-    private List<Role> roleList; //角色列表
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+    /**
+     * 菜单列表
+     */
+    private List<Menu> menulist;
+    /**
+     * 角色列表
+     */
+    private List<Role> roleList;
 
     public Date getCreateTime() {
         return createTime;

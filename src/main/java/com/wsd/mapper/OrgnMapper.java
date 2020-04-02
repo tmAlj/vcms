@@ -7,7 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 系统组织mapper
+ * @author tm
+ * @version 1.0.0
+ * @description 系统组织mapper
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 @Repository
 public interface OrgnMapper extends BaseMapper<Orgn>{

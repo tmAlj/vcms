@@ -13,9 +13,18 @@ import java.io.Serializable;
  */
 public class RoleAndMenu implements Serializable {
 
-    private Long id; //id
-    private Long roleId; //角色id
-    private Long menuId; //菜单id
+    /**
+     * id
+     */
+    private Long id;
+    /**
+     * 角色id
+     */
+    private Long roleId;
+    /**
+     * 菜单id
+     */
+    private Long menuId;
 
     public Long getId() {
         return id;

@@ -1,5 +1,6 @@
 package com.wsd.controller;
 
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.Orgn;
 import com.wsd.entity.User;
 import com.wsd.service.OrgnService;
@@ -74,21 +75,12 @@ public class OrgnController {
         return ResultData.ok().put("orgnList", orgnList);
     }
 
-/*    *//**
-     * 查询组织列表
-     *//*
-    @GetMapping("/orgn/getOrgnList1")
-    public List<Orgn> getOrgnList1(){
-        List<Orgn> orgnList = orgnService.getOrgnList();
-        return orgnList;
-    }*/
-
-
     /**
      * 新增组织
      * @return
      */
    @PostMapping("/orgn/addOrgn")
+   @ControllerLog(model = "组织模块", type = "新增", describe = "组织新增")
     public ResultData addOrgn(@RequestBody Orgn orgn){
         orgnService.addOrgn(orgn);
         return ResultData.ok();
@@ -99,6 +91,7 @@ public class OrgnController {
      * @return
      */
     @PostMapping("/orgn/deleteOrgn")
+    @ControllerLog(model = "组织模块", type = "删除", describe = "组织删除")
     public ResultData deleteOrgn(@RequestBody Long[] orgnIds){
         if(ArrayUtils.contains(orgnIds, 1L)){
             return ResultData.error("系统组织不能删除");
@@ -118,6 +111,7 @@ public class OrgnController {
      * @return
      */
     @PostMapping("/orgn/updateOrgn")
+    @ControllerLog(model = "组织模块", type = "修改", describe = "组织修改")
     public ResultData updateOrgn(@RequestBody Orgn orgn){
         orgnService.updateOrgn(orgn);
         return ResultData.ok();

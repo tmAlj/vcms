@@ -1,20 +1,13 @@
 package com.wsd.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.wsd.annotation.ControllerLog;
 import com.wsd.entity.Role;
-import com.wsd.entity.RoleAndMenu;
-import com.wsd.entity.User;
 import com.wsd.service.RoleAndMenuService;
-import com.wsd.service.UserService;
 import com.wsd.utils.ResultData;
-import com.wsd.utils.SecurityUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author tm
@@ -37,6 +30,7 @@ public class RoleAndMenuController {
      * @return
      */
     @PostMapping("/rolemenu/updateRoleAndMenu")
+    @ControllerLog(model = "角色菜单模块", type = "修改", describe = "角色菜单修改")
     public ResultData updateRoleAndMenu(@RequestBody Role role){
         roleAndMenuService.updateRoleAndMenu(role);
         return ResultData.ok();

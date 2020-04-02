@@ -5,7 +5,13 @@ import com.wsd.entity.Orgn;
 import java.util.List;
 
 /**
- * 系统组织service
+ * @author tm
+ * @version 1.0.0
+ * @description 系统组织service
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 public interface OrgnService {
 

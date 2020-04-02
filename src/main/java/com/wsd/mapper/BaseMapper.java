@@ -4,8 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 系统BaseMapper
- * @param <T>
+ * @author tm
+ * @version 1.0.0
+ * @description 系统BaseMapper
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-3 16:05
+ * @updateDate 2020-3-3 16:05
  */
 public interface BaseMapper<T> {
 

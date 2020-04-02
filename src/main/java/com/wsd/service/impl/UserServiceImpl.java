@@ -1,25 +1,25 @@
 package com.wsd.service.impl;
 
-import com.wsd.entity.Menu;
 import com.wsd.entity.User;
-import com.wsd.mapper.MenuMapper;
-import com.wsd.mapper.UserAndRoleMapper;
 import com.wsd.mapper.UserMapper;
-import com.wsd.service.MenuService;
 import com.wsd.service.UserAndRoleService;
 import com.wsd.service.UserService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * 系统用户serviceImpl
+ * @author tm
+ * @version 1.0.0
+ * @description 系统用户serviceImpl
+ * @updateRemark
+ * @updateUser
+ * @createDate 2020-3-22 14:49
+ * @updateDate 2020-3-22 14:49
  */
 @Service
 public class UserServiceImpl implements UserService {

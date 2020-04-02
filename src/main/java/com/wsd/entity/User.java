@@ -22,19 +22,58 @@ import java.util.List;
  */
 public class User implements UserDetails {
 
-    private Long userId; // 用户ID
-    private String username; // 账户
-    private String password; //密码
-    private String email; //邮箱
-    private String mobile; //手机号
-    private Boolean enabled; //状态  0：禁用   1：正常
-    private String name; //姓名
-    private String userface; //用户头像
+    /**
+     * 用户id
+     */
+    private Long userId;
+    /**
+     * 账户
+     */
+    private String username;
+    /**
+     * 密码
+     */
+    private String password;
+    /**
+     * 邮箱
+     */
+    private String email;
+    /**
+     * 手机号
+     */
+    private String mobile;
+    /**
+     * 状态  0：禁用   1：正常
+     */
+    private Boolean enabled;
+    /**
+     * 姓名
+     */
+    private String name;
+    /**
+     * 用户头像
+     */
+    private String userface;
+    /**
+     * 备注
+     */
     private String remark;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date createTime; //创建时间
-    private List<Role> roleList; //用户角色列表
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+    /**
+     * 用户角色列表
+     */
+    private List<Role> roleList;
+    /**
+     * 组织id
+     */
     private Long orgnId;
+    /**
+     * 职位id
+     */
     private Long postId;
 
     private List<Long> roleIdList;

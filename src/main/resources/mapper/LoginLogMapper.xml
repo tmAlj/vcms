@@ -6,8 +6,8 @@
     <!--查询登录日志列表-->
     <select id="getLoginLogList" resultMap="loginLog">
         SELECT
-		<include refid="Base_Column_List"/>,
-		FROM sys_login_log u WHERE 1=1
+		<include refid="Base_Column_List"/>
+		FROM sys_login_log WHERE 1=1
         <if test="loginLog.userName != '' and loginLog.userName != null">
 			AND user_name like concat('%',#{loginLog.userName},'%')
         </if>
