@@ -23,7 +23,20 @@
      (7)登录日志
      !["登录"](https://github.com/tmAlj/vcms/blob/master/src/main/resources/images/%E7%99%BB%E5%BD%95%E6%97%A5%E5%BF%97.png)  
      (8)操作日志
-     !["登录"](https://github.com/tmAlj/vcms/blob/master/src/main/resources/images/%E6%93%8D%E4%BD%9C%E6%97%A5%E5%BF%97.png)
+     !["登录"](https://github.com/tmAlj/vcms/blob/master/src/main/resources/images/%E6%93%8D%E4%BD%9C%E6%97%A5%E5%BF%97.png)  
+ 
+ 四、其它说明  
+     (1)启动项目  
+          startserver  
+     (2)数据库表  
+          resources/db/vcms.sql  
+     (3)代码生成器  
+          resource/generator/generator.xml中配置，启动startGenerator生成对于entity，mapper，xml  
+     (4)swagger  
+          controller/api下面接口可通过swagger文档查看测试
+     
+          
+ 
      
      
     
