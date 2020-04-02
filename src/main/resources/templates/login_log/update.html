@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改职位</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/plugins/layui/css/layui.css}" media="all">
+    <style>
+        .layui-form-item{
+            clear: none !important;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">账户名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="userName" lay-verify="required" placeholder="请输入职位名称" autocomplete="off" class="layui-input" lay-verType="tips" id="userName">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">IP</label>
+        <div class="layui-input-inline">
+            <input type="text" name="ip" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="ip">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">浏览器</label>
+        <div class="layui-input-inline">
+            <input type="text" name="browser" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="browser">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">操作系统</label>
+        <div class="layui-input-inline">
+            <input type="text" name="system" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="system">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地理位置</label>
+        <div class="layui-input-inline">
+            <input type="text" name="location" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="location">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">操作信息</label>
+        <div class="layui-input-inline">
+            <input type="text" name="info" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="info">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">主机名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="hostName" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="hostName">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">登录时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="createTime" lay-verify="" placeholder="" autocomplete="off" class="layui-input" lay-verType="tips" id="createTime">
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/static/plugins/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/static/common/jquery.min.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        layui.use(['form','layer'], function(){
+            var form = layui.form,
+                layer = layui.layer;
+        });
+    })
+</script>
+</body>
+</html>
